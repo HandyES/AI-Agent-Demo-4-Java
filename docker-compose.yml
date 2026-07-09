@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  ai-agent:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - AI_AGENT_LLM_PROVIDER=mock
+      - AI_AGENT_SECURITY_ENABLED=true
+      - AI_AGENT_OBSERVABILITY_LOGGING=true
+      - AI_AGENT_OBSERVABILITY_TRACING=true
+      - AI_AGENT_OBSERVABILITY_METRICS=true
+    volumes:
+      - ./computeruse:/app/computeruse
+    networks:
+      - ai-agent-network
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    networks:
+      - ai-agent-network
+    restart: unless-stopped
+
+volumes:
+  ollama:
+
+networks:
+  ai-agent-network:
+    driver: bridge
