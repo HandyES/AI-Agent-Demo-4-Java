@@ -1,3 +1,75 @@
+server:
+  port: 8080
+
 spring:
   application:
-    name: AIAgent
+    name: ai-agent-demo
+  datasource:
+    url: jdbc:h2:mem:agentdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    cn.example.aiagent: DEBUG
+    org.springframework.ai: DEBUG
+    org.springframework.web: DEBUG
+
+ai:
+  agent:
+    llm:
+      provider: mock
+      mock:
+        enabled: true
+      ollama:
+        enabled: false
+        model: qwen
+        base-url: http://localhost:11434
+      qwen:
+        enabled: false
+        api-key: ${QWEN_API_KEY:}
+        base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      deepseek:
+        enabled: false
+        api-key: ${DEEPSEEK_API_KEY:}
+    rag:
+      mode: basic
+      embedding:
+        provider: mock
+    security:
+      enabled: true
+      injection-protection: true
+      jailbreak-protection: true
+      data-pollution-protection: true
+      sensitive-info-protection: true
+    observability:
+      logging: true
+      tracing: true
+      metrics: true
+    human-review:
+      enabled: true
+      threshold: 0.8
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
